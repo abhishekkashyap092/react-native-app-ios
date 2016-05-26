@@ -1,0 +1,160 @@
+//importing the components from the react-native
+import React, {
+  Component,
+} from 'react';
+import {
+  AppRegistry,
+  Image,
+  ListView,
+  StyleSheet,
+  Text,
+  View,
+} from 'react-native';
+//defining the variable for requesting the url for viewing images
+var REQUEST_URL = 'https://raw.githubusercontent.com/facebook/react-native/master/docs/MoviesExample.json';
+
+class example1 extends Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      dataSource: new ListView.DataSource({
+        rowHasChanged: (row1, row2) => row1 !== row2,
+      }),
+      loaded: false,
+    };
+  }
+
+  componentDidMount() {
+    this.fetchData();
+  }
+
+  fetchData() {
+    fetch(REQUEST_URL)
+      .then((response) => response.json())
+      .then((responseData) => {
+        this.setState({
+          dataSource: this.state.dataSource.cloneWithRows(responseData.movies),
+          loaded: true,
+        });
+      })
+      .done();
+  }
+
+  render() {
+    if (!this.state.loaded) {
+      return this.renderLoadingView();
+    }
+
+    return (
+      <ListView
+        dataSource={this.state.dataSource}
+        renderRow={this.renderMovie}
+        style={styles.listView}
+      />
+    );
+  }
+
+  renderLoadingView() {
+    return (
+      <View style={styles.container}>
+        <Text>
+          Loading movies...
+        </Text>
+        </View>
+ 
+    );
+  }
+  renderFooter(footer) {
+    <View style={styles.footer}>
+    <View><Text>footer</Text></View>
+    <View><Text>My fixed footer</Text></View>
+    </View>
+  }
+ 
+  renderMovie(movie) {
+    return (
+      <View style={styles.container}>
+        <Image
+          source={{uri: movie.posters.thumbnail}}
+          style={styles.thumbnail}
+        />
+        <View style={styles.rightContainer}>
+          <Text style={styles.title}>{movie.title}</Text>
+          <Text style={styles.year}>{movie.year}</Text>
+        </View>
+        <View style={styles.footer}>
+    <View><Text>footer</Text></View>
+    <View><Text>My fixed footer</Text></View>
+    </View>
+      </View>
+    );
+  }
+
+}
+
+var FooterView = React.createClass({
+  render: function () {
+    if (!this.props.footer) {
+      return (
+        <View style={styles.footer}>
+          <Text style={styles.title}>Welcome!</Text>
+        </View>
+      );
+    }
+    return (
+      <View style={styles.footer}>
+      </View>
+    );
+  }
+});
+
+
+
+var styles = StyleSheet.create({
+  container: {
+    flex: 3,
+    flexDirection: 'row',
+    borderWidth: 1,
+    borderRadius: 1,
+    padding: 4,
+    //backgroundColor: '#FF0000',
+    borderColor: '#000033',
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+    //backgroundColor: 'green',
+    borderStyle:'dotted',
+    borderBottomColor:'blue',
+    borderBottomLeftRadius : 5,
+    borderBottomWidth: 12,
+  },
+  rightContainer: {
+    flex: 1,
+  },
+  title: {
+    fontSize:8,
+    marginBottom: 8,
+    textAlign: 'center',
+  },
+  year: {
+    textAlign: 'center',
+  },
+  thumbnail: {
+    width: 53,
+    height: 81,
+  },
+  listView: {
+    paddingTop: 20,
+    backgroundColor: '#F5FCFF',
+  },
+  footer:{
+    flex: 6,
+    backgroundColor:'blue',
+    borderStyle:'dotted',
+    //borderBottomWidth:5,
+    //borderBottomLeftRadius: 3,
+    //borderBottomRightRadius:6,
+  },
+});
+
+AppRegistry.registerComponent('example1', () => example1);
